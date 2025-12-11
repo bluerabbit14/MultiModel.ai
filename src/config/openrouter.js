@@ -1,6 +1,6 @@
 // OpenRouter API Configuration
 // Read API key from environment variable (must start with REACT_APP_ for Create React App)
-const API_KEY ='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';
+const API_KEY ='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';
 
 // Debug: Check if environment variable is accessible
 console.log('🔍 Environment check:', {
