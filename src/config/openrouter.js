@@ -1,5 +1,5 @@
 // OpenRouter API Configuration
-const API_KEY = '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';
+const API_KEY = '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';
 
 export const OPENROUTER_CONFIG = {
   BASE_URL: 'https://openrouter.ai/api/v1/chat/completions',
