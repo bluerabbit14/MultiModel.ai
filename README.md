@@ -4,7 +4,7 @@ A modern, multi-model AI chat assistant built with React. Access multiple state-
 
 ## Features
 
-- **Multiple AI Models**: Switch between different AI models including Grok-4 Fast, Mistral Devstral, and Llama 3.3 70B
+- **Multiple AI Models**: Switch between different AI models including Google Gemma 3N E2B IT, Mistral Devstral, and Llama 3.3 70B
 - **Real-time Chat**: Interactive chat interface with smooth typing animations
 - **Conversation History**: Search through your chat history with highlighted results
 - **Model Switching**: Seamlessly switch between AI models mid-conversation
@@ -16,7 +16,7 @@ A modern, multi-model AI chat assistant built with React. Access multiple state-
 
 ## Available AI Models
 
-- **Grok-4 Fast** (xAI) - Fast and capable AI model
+- **Google Gemma 3N E2B IT** (Google) - Fast and capable AI model
 - **Mistral Devstral 2512** (Mistral AI) - Advanced conversational AI model
 - **Llama 3.3 70B Instruct** (Meta) - Powerful 70B parameter instruction-tuned model
 

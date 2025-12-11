@@ -1,6 +1,6 @@
 // OpenRouter API Configuration
 // Read API key from environment variable (must start with REACT_APP_ for Create React App)
-const API_KEY ='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';
+const API_KEY ='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';
 
 // Debug: Check if environment variable is accessible
 console.log('🔍 Environment check:', {
@@ -51,19 +51,19 @@ export const OPENROUTER_CONFIG = {
 export const AI_MODELS = [
   {
     id: 1,
-    model_id: 'x-ai/grok-4-fast',
-    model_name: 'Grok-4 Fast',
-    provider: 'xAI',
-    description: 'Fast and capable AI model from xAI',
+    model_id: 'google/gemma-3n-e2b-it',
+    model_name: 'Google Gemma 3N E2B IT',
+    provider: 'Google',
+    description: 'Fast and capable AI model from Google',
     max_tokens: 4096,
     temperature: 0.7,
     top_p: 1,
     is_active: true,
-    openrouter_id: 'x-ai/grok-4-fast'
+    openrouter_id: 'google/gemma-3n-e2b-it:free'
   },
   {
     id: 2,
-    model_id: 'mistralai/devstral-2512',
+    model_id: 'mistralai/devstral-2512:free',
     model_name: 'Mistral Devstral 2512',
     provider: 'Mistral AI',
     description: 'Advanced conversational AI model from Mistral',
@@ -75,7 +75,7 @@ export const AI_MODELS = [
   },
   {
     id: 3,
-    model_id: 'meta-llama/llama-3.3-70b-instruct',
+    model_id: 'meta-llama/llama-3.3-70b-instruct:free',
     model_name: 'Llama 3.3 70B Instruct',
     provider: 'Meta',
     description: 'Powerful 70B parameter instruction-tuned model from Meta',
@@ -83,7 +83,7 @@ export const AI_MODELS = [
     temperature: 0.7,
     top_p: 1,
     is_active: true,
-    openrouter_id: 'meta-llama/llama-3.3-70b-instruct'
+    openrouter_id: 'meta-llama/llama-3.3-70b-instruct:free'
   }
   // Add more models here in the future
 ];

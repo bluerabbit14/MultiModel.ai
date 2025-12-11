@@ -2,7 +2,7 @@ import { OPENROUTER_CONFIG } from '../config/openrouter';
 
 /**
  * Send a chat completion request to OpenRouter API
- * @param {string} model - The model ID to use (e.g., 'x-ai/grok-4-fast:free')
+ * @param {string} model - The model ID to use (e.g., 'google/gemma-3n-e2b-it:free')
  * @param {Array} messages - Array of message objects with role and content
  * @returns {Promise} - API response
  */
