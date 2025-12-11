@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faPen, faArrowUp, faBars, faCheck, faBolt, faXmark, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
-import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { faCopy, faPenToSquare, faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
 import { getActiveModels, getDefaultModel } from './config/openrouter';
 import { sendChatRequest, extractResponseText, formatMessagesForAPI } from './services/openrouterApi';
 import './App.css';
@@ -35,10 +35,12 @@ function App() {
   const [highlightedMessageId, setHighlightedMessageId] = useState(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [currentInputLabel, setCurrentInputLabel] = useState(inputLabels[0]);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const dropdownRef = useRef(null);
   const messageRefs = useRef({});
   const chatAreaRef = useRef(null);
   const textareaRef = useRef(null);
+  const previousModelRef = useRef(getDefaultModel());
 
   // Detect mobile screen size changes
   useEffect(() => {
@@ -60,6 +62,21 @@ function App() {
   };
 
   const handleModelSelect = (model) => {
+    const previousModel = previousModelRef.current;
+    
+    // Only show message if model actually changed and chat has started
+    if (previousModel.id !== model.id && hasChatStarted) {
+      const modelChangeMessage = {
+        id: Date.now(),
+        text: `Model changed from ${previousModel.model_name} to ${model.model_name}`,
+        sender: 'system',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, modelChangeMessage]);
+    }
+    
+    previousModelRef.current = model;
     setSelectedModel(model);
     setIsDropdownOpen(false);
   };
@@ -201,6 +218,14 @@ function App() {
   const handleSearchClose = () => {
     setIsSearchOpen(false);
     setSearchQuery('');
+  };
+
+  const handleHelpOpen = () => {
+    setIsHelpOpen(true);
+  };
+
+  const handleHelpClose = () => {
+    setIsHelpOpen(false);
   };
 
   const handleSearchChange = (e) => {
@@ -559,14 +584,14 @@ function App() {
               <div className="side-panel-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
                 <img src="/multimodel.png" alt="MultiModel.ai" className="logo-image" />
               </div>
-              <button className="side-panel-close-button">
+              {/* <button className="side-panel-close-button" >
                 <FontAwesomeIcon icon={faAngleLeft} />
-              </button>
+              </button> */}
             </div>
             <div className="side-panel-content">
               <button className="side-panel-item" onClick={handleNewChat}>
               <span className="side-panel-icon">
-                <FontAwesomeIcon icon={faPen} />
+                <FontAwesomeIcon icon={faPenToSquare} />
               </span>
               <span className="side-panel-text">New chat</span>
             </button>
@@ -613,40 +638,84 @@ function App() {
         </div>
       )}
 
+      {/* Help Popup */}
+      {isHelpOpen && (
+        <div className="help-pad-overlay" onClick={handleHelpClose}>
+          <div className="help-pad" onClick={(e) => e.stopPropagation()}>
+            <div className="help-pad-header">
+              <h3>About MultiModel.ai</h3>
+              <button className="help-close-button" onClick={handleHelpClose}>
+                ×
+              </button>
+            </div>
+            <div className="help-pad-content">
+              <p className="help-description">
+                MultiModel.ai is an advanced AI chat application that allows you to interact with multiple AI models 
+                through a single, unified interface. Our platform provides seamless access to various state-of-the-art 
+                language models, enabling you to choose the best AI assistant for your specific needs.
+              </p>
+              <div className="help-features">
+                <h4>Key Features:</h4>
+                <ul>
+                  <li>Access multiple AI models from one interface</li>
+                  <li>Real-time chat with typing animations</li>
+                  <li>Search through your conversation history</li>
+                  <li>Clean and intuitive user interface</li>
+                  <li>Responsive design for all devices</li>
+                </ul>
+              </div>
+              <div className="help-info">
+                <p>
+                  <strong>Version:</strong> 1.0.0
+                </p>
+                <p>
+                  <strong>Powered by:</strong> OpenRouter API
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="main-content">
         {!isMobile && (
-          <div className="dropdown-container" ref={dropdownRef}>
-            <button className="dropdown-button" onClick={toggleDropdown}>
-              {selectedModel.model_name} <span className="dropdown-arrow">{isDropdownOpen ? '▲' : '▼'}</span>
-            </button>
-            {isDropdownOpen && (
-              <div className="dropdown-menu">
-                {getActiveModels().map((model) => (
-                  <div 
-                    key={model.id} 
-                    className={`dropdown-item ${selectedModel.id === model.id ? 'active' : ''}`}
-                    onClick={() => handleModelSelect(model)}
-                  >
-                    <div className="dropdown-item-content">
-                      <div className="dropdown-item-icon">
-                        <FontAwesomeIcon icon={faBolt} />
+          <>
+            <div className="dropdown-container" ref={dropdownRef}>
+              <button className="dropdown-button" onClick={toggleDropdown}>
+                {selectedModel.model_name} <span className="dropdown-arrow">{isDropdownOpen ? '▲' : '▼'}</span>
+              </button>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  {getActiveModels().map((model) => (
+                    <div 
+                      key={model.id} 
+                      className={`dropdown-item ${selectedModel.id === model.id ? 'active' : ''}`}
+                      onClick={() => handleModelSelect(model)}
+                    >
+                      <div className="dropdown-item-content">
+                        <div className="dropdown-item-icon">
+                          <FontAwesomeIcon icon={faBolt} />
+                        </div>
+                        <div className="dropdown-item-text">
+                          <div className="dropdown-item-name">{model.model_name}</div>
+                          <div className="dropdown-item-description">{model.description}</div>
+                        </div>
                       </div>
-                      <div className="dropdown-item-text">
-                        <div className="dropdown-item-name">{model.model_name}</div>
-                        <div className="dropdown-item-description">{model.description}</div>
-                      </div>
+                      {selectedModel.id === model.id && (
+                        <div className="dropdown-item-check">
+                          <FontAwesomeIcon icon={faCheck} />
+                        </div>
+                      )}
                     </div>
-                    {selectedModel.id === model.id && (
-                      <div className="dropdown-item-check">
-                        <FontAwesomeIcon icon={faCheck} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button className="help-button" onClick={handleHelpOpen}>
+              <FontAwesomeIcon icon={faCircleQuestion} />
+            </button>
+          </>
         )}
         <div className="input-wrapper">
           {!hasChatStarted && (
@@ -660,6 +729,21 @@ function App() {
                 const displayText = typingState?.displayedText || message.text;
                 const isHighlighted = highlightedMessageId === message.id && searchQuery;
                 const hasMatch = searchQuery && message.text.toLowerCase().includes(searchQuery.toLowerCase());
+                
+                // Handle system messages (model changes)
+                if (message.sender === 'system') {
+                  return (
+                    <div 
+                      key={message.id} 
+                      ref={el => messageRefs.current[message.id] = el}
+                      className="chat-message system"
+                    >
+                      <div className="message-content">
+                        {message.text}
+                      </div>
+                    </div>
+                  );
+                }
                 
                 return (
                   <div 
@@ -700,7 +784,7 @@ function App() {
               )}
             </div>
           )}
-          <div className={`input-container ${isInputFocused ? 'focused' : ''}`}>
+          <div className={`input-container ${isInputFocused ? 'focused' : ''} ${!hasChatStarted ? 'no-chat' : ''}`}>
             <textarea
               ref={textareaRef}
               placeholder="Ask anything" 

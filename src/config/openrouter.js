@@ -1,5 +1,5 @@
 // OpenRouter API Configuration
-const API_KEY = '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';
+const API_KEY = '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';
 
 export const OPENROUTER_CONFIG = {
   BASE_URL: 'https://openrouter.ai/api/v1/chat/completions',
@@ -25,6 +25,30 @@ export const AI_MODELS = [
     top_p: 1,
     is_active: true,
     openrouter_id: 'x-ai/grok-4-fast'
+  },
+  {
+    id: 2,
+    model_id: 'mistralai/devstral-2512',
+    model_name: 'Mistral Devstral 2512',
+    provider: 'Mistral AI',
+    description: 'Advanced conversational AI model from Mistral',
+    max_tokens: 4096,
+    temperature: 0.7,
+    top_p: 1,
+    is_active: true,
+    openrouter_id: 'mistralai/devstral-2512:free'
+  },
+  {
+    id: 3,
+    model_id: 'meta-llama/llama-3.3-70b-instruct',
+    model_name: 'Llama 3.3 70B Instruct',
+    provider: 'Meta',
+    description: 'Powerful 70B parameter instruction-tuned model from Meta',
+    max_tokens: 4096,
+    temperature: 0.7,
+    top_p: 1,
+    is_active: true,
+    openrouter_id: 'meta-llama/llama-3.3-70b-instruct'
   }
   // Add more models here in the future
 ];

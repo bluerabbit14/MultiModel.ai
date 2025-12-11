@@ -12,12 +12,7 @@ export const sendChatRequest = async (model, messages) => {
       model: model,
       messages: messages.map(msg => ({
         role: msg.role,
-        content: [
-          {
-            type: 'text',
-            text: msg.content
-          }
-        ]
+        content: msg.content
       }))
     };
 
@@ -29,12 +24,25 @@ export const sendChatRequest = async (model, messages) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || errorData.message || `API request failed: ${response.statusText}`;
+      let errorMessage = errorData.error?.message || errorData.message || `API request failed: ${response.statusText}`;
+      
+      // Provide more user-friendly error messages
+      if (errorMessage.toLowerCase().includes('user not found') || errorMessage.toLowerCase().includes('unauthorized')) {
+        errorMessage = 'API authentication failed. Please check your API key in the configuration.';
+      } else if (errorMessage.toLowerCase().includes('model') && errorMessage.toLowerCase().includes('not found')) {
+        errorMessage = 'The selected AI model is not available. Please try a different model.';
+      } else if (response.status === 429) {
+        errorMessage = 'Rate limit exceeded. Please try again in a moment.';
+      } else if (response.status === 401) {
+        errorMessage = 'Invalid API key. Please check your OpenRouter API key configuration.';
+      }
+      
       console.error('OpenRouter API Error Details:', {
         status: response.status,
         statusText: response.statusText,
         errorData: errorData,
-        requestBody: requestBody
+        requestBody: requestBody,
+        originalError: errorData.error?.message || errorData.message
       });
       throw new Error(errorMessage);
     }
@@ -76,9 +84,11 @@ export const extractResponseText = (apiResponse) => {
  * @returns {Array} - Formatted messages for API
  */
 export const formatMessagesForAPI = (messages) => {
-  return messages.map(msg => ({
-    role: msg.sender === 'user' ? 'user' : 'assistant',
-    content: msg.text
-  }));
+  return messages
+    .filter(msg => msg.sender !== 'system') // Exclude system messages from API calls
+    .map(msg => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.text
+    }));
 };
 
