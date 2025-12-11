@@ -1,5 +1,38 @@
 // OpenRouter API Configuration
-const API_KEY = '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';
+// Read API key from environment variable (must start with REACT_APP_ for Create React App)
+const API_KEY = process.env.REACT_APP_OPENROUTER_API_KEY || '';
+
+// Debug: Check if environment variable is accessible
+if (process.env.NODE_ENV === 'development') {
+  console.log('Environment check:', {
+    hasEnvVar: !!process.env.REACT_APP_OPENROUTER_API_KEY,
+    envVarLength: process.env.REACT_APP_OPENROUTER_API_KEY?.length || 0,
+    allReactAppVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_'))
+  });
+}
+
+// Validate API key is loaded
+if (!API_KEY || API_KEY.trim() === '') {
+  const errorMsg = `
+❌ ERROR: REACT_APP_OPENROUTER_API_KEY is not set!
+
+To fix this:
+1. Create a .env file in the root directory (same folder as package.json)
+2. Add this line to the .env file:
+   REACT_APP_OPENROUTER_API_KEY=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
+3. Make sure:
+   - File is named exactly ".env" (with the dot)
+   - No spaces around the = sign
+   - Variable name is exactly REACT_APP_OPENROUTER_API_KEY (case-sensitive)
+4. Restart the development server (stop with Ctrl+C, then run npm start again)
+
+Note: The .env file should be in the root directory, not in the src folder.
+  `;
+  console.error(errorMsg);
+  
+  // Don't throw error immediately - allow app to load but show warning
+  // The API calls will fail with a clear error message instead
+}
 
 export const OPENROUTER_CONFIG = {
   BASE_URL: 'https://openrouter.ai/api/v1/chat/completions',
