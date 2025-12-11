@@ -1,15 +1,14 @@
 // OpenRouter API Configuration
 // Read API key from environment variable (must start with REACT_APP_ for Create React App)
-const API_KEY = process.env.REACT_APP_OPENROUTER_API_KEY || '';
+const API_KEY ='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';
 
 // Debug: Check if environment variable is accessible
-if (process.env.NODE_ENV === 'development') {
-  console.log('Environment check:', {
-    hasEnvVar: !!process.env.REACT_APP_OPENROUTER_API_KEY,
-    envVarLength: process.env.REACT_APP_OPENROUTER_API_KEY?.length || 0,
-    allReactAppVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_'))
-  });
-}
+console.log('🔍 Environment check:', {
+  hasEnvVar: !!process.env.REACT_APP_OPENROUTER_API_KEY,
+  envVarLength: process.env.REACT_APP_OPENROUTER_API_KEY?.length || 0,
+  apiKeyFirstChars: API_KEY ? API_KEY.substring(0, 10) + '...' : 'NOT SET',
+  allReactAppVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_'))
+});
 
 // Validate API key is loaded
 if (!API_KEY || API_KEY.trim() === '') {
@@ -17,14 +16,15 @@ if (!API_KEY || API_KEY.trim() === '') {
 ❌ ERROR: REACT_APP_OPENROUTER_API_KEY is not set!
 
 To fix this:
-1. Create a .env file in the root directory (same folder as package.json)
-2. Add this line to the .env file:
-   REACT_APP_OPENROUTER_API_KEY=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
+1. Make sure your .env file is in the root directory (same folder as package.json)
+2. The .env file should contain:
+   REACT_APP_OPENROUTER_API_KEY=your-api-key-here
 3. Make sure:
    - File is named exactly ".env" (with the dot)
    - No spaces around the = sign
    - Variable name is exactly REACT_APP_OPENROUTER_API_KEY (case-sensitive)
-4. Restart the development server (stop with Ctrl+C, then run npm start again)
+4. ⚠️ IMPORTANT: Restart the development server (stop with Ctrl+C, then run npm start again)
+   Environment variables are only loaded when the server starts!
 
 Note: The .env file should be in the root directory, not in the src folder.
   `;
@@ -32,6 +32,8 @@ Note: The .env file should be in the root directory, not in the src folder.
   
   // Don't throw error immediately - allow app to load but show warning
   // The API calls will fail with a clear error message instead
+} else {
+  console.log('✅ API Key loaded successfully from environment variable');
 }
 
 export const OPENROUTER_CONFIG = {

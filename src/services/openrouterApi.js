@@ -8,6 +8,11 @@ import { OPENROUTER_CONFIG } from '../config/openrouter';
  */
 export const sendChatRequest = async (model, messages) => {
   try {
+    // Verify API key is present before making request
+    if (!OPENROUTER_CONFIG.API_KEY || OPENROUTER_CONFIG.API_KEY.trim() === '') {
+      throw new Error('API key is not configured. Please check your .env file and restart the server.');
+    }
+
     const requestBody = {
       model: model,
       messages: messages.map(msg => ({
@@ -15,6 +20,16 @@ export const sendChatRequest = async (model, messages) => {
         content: msg.content
       }))
     };
+
+    // Debug: Log request details (without exposing full API key)
+    console.log('📤 Sending API request:', {
+      url: OPENROUTER_CONFIG.BASE_URL,
+      model: model,
+      apiKeyPresent: !!OPENROUTER_CONFIG.API_KEY,
+      apiKeyLength: OPENROUTER_CONFIG.API_KEY?.length || 0,
+      apiKeyPrefix: OPENROUTER_CONFIG.API_KEY?.substring(0, 10) + '...',
+      messageCount: messages.length
+    });
 
     const response = await fetch(OPENROUTER_CONFIG.BASE_URL, {
       method: 'POST',
@@ -28,21 +43,23 @@ export const sendChatRequest = async (model, messages) => {
       
       // Provide more user-friendly error messages
       if (errorMessage.toLowerCase().includes('user not found') || errorMessage.toLowerCase().includes('unauthorized')) {
-        errorMessage = 'API authentication failed. Please check your API key in the configuration.';
+        errorMessage = 'Invalid API key: The API key in your .env file is not valid or has expired. Please:\n1. Go to https://openrouter.ai/keys to get a valid API key\n2. Update your .env file with the new key\n3. Restart the development server';
       } else if (errorMessage.toLowerCase().includes('model') && errorMessage.toLowerCase().includes('not found')) {
         errorMessage = 'The selected AI model is not available. Please try a different model.';
       } else if (response.status === 429) {
         errorMessage = 'Rate limit exceeded. Please try again in a moment.';
       } else if (response.status === 401) {
-        errorMessage = 'Invalid API key. Please check your OpenRouter API key configuration.';
+        errorMessage = 'Invalid API key. Please check your OpenRouter API key in the .env file and restart the server.';
       }
       
-      console.error('OpenRouter API Error Details:', {
+      console.error('❌ OpenRouter API Error Details:', {
         status: response.status,
         statusText: response.statusText,
         errorData: errorData,
-        requestBody: requestBody,
-        originalError: errorData.error?.message || errorData.message
+        originalError: errorData.error?.message || errorData.message,
+        apiKeyPresent: !!OPENROUTER_CONFIG.API_KEY,
+        apiKeyLength: OPENROUTER_CONFIG.API_KEY?.length || 0,
+        apiKeyPrefix: OPENROUTER_CONFIG.API_KEY?.substring(0, 10) + '...'
       });
       throw new Error(errorMessage);
     }
