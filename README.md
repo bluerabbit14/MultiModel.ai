@@ -16,9 +16,11 @@ A modern, multi-model AI chat assistant built with React. Access multiple state-
 
 ## Available AI Models
 
-- **Google Gemma 3N E2B IT** (Google) - Fast and capable AI model
-- **Mistral Devstral 2512** (Mistral AI) - Advanced conversational AI model
-- **Llama 3.3 70B Instruct** (Meta) - Powerful 70B parameter instruction-tuned model
+All models are configured to use the free tier:
+
+- **Google Gemma 3N E2B IT** (Google) - Fast and capable AI model from Google
+- **Mistral Devstral 2512** (Mistral AI) - Advanced conversational AI model from Mistral
+- **Llama 3.3 70B Instruct** (Meta) - Powerful 70B parameter instruction-tuned model from Meta
 
 ## Setup
 
@@ -41,14 +43,16 @@ cd MultiModel.ai
 npm install
 ```
 
-3. Create a `.env` file in the root directory:
-```bash
-REACT_APP_OPENROUTER_API_KEY=your-api-key-here
-```
+3. Create a `.env` file in the root directory (same folder as `package.json`):
+   - Create a new file named `.env` (with the dot at the beginning)
+   - Add the following line (replace `your-api-key-here` with your actual API key):
+   ```bash
+   REACT_APP_OPENROUTER_API_KEY=your-api-key-here
+   ```
+   - Make sure there are **no spaces** around the `=` sign
+   - Get your API key from [https://openrouter.ai/keys](https://openrouter.ai/keys)
 
-4. Replace `your-api-key-here` with your actual OpenRouter API key from [https://openrouter.ai/keys](https://openrouter.ai/keys)
-
-5. Start the development server:
+4. Start the development server:
 ```bash
 npm start
 ```
@@ -59,16 +63,21 @@ The app will open at `http://localhost:3000`
 
 - The `.env` file must be in the root directory (same folder as `package.json`)
 - The environment variable must be named exactly `REACT_APP_OPENROUTER_API_KEY` (case-sensitive)
-- **You must restart the development server** after creating or modifying the `.env` file for changes to take effect
+- **⚠️ CRITICAL: You must restart the development server** after creating or modifying the `.env` file for changes to take effect
+  - Stop the server with `Ctrl+C`
+  - Run `npm start` again
+- Environment variables are only loaded when the server starts, not during runtime
+- The `.env` file is automatically ignored by git (via `.gitignore`) to keep your API key secure
 
 ## Usage
 
-1. Select an AI model from the sidebar
-2. Type your message in the input field or click on a sample prompt
-3. Press Enter or click the send button
-4. Switch models anytime during your conversation
-5. Use the search feature to find specific messages in your chat history
-6. Copy any message by clicking the copy icon
+1. **Start the app**: After setting up the `.env` file and restarting the server, the app will open at `http://localhost:3000`
+2. **Select an AI model**: Choose from the available models in the sidebar
+3. **Start chatting**: Type your message in the input field or click on a sample prompt
+4. **Send messages**: Press Enter or click the send button
+5. **Switch models**: Seamlessly switch between AI models anytime during your conversation
+6. **Search history**: Use the search feature to find specific messages in your chat history
+7. **Copy messages**: Click the copy icon on any message to copy it to your clipboard
 
 ## Technology Stack
 
@@ -84,6 +93,29 @@ npm run build
 ```
 
 This creates an optimized production build in the `build` folder.
+
+## Troubleshooting
+
+### API Key Not Loading
+
+If you see an error message about the API key not being configured:
+
+1. **Verify the `.env` file exists** in the root directory (same folder as `package.json`)
+2. **Check the file format**:
+   - Must be named exactly `.env` (with the dot)
+   - Must contain: `REACT_APP_OPENROUTER_API_KEY=your-api-key-here`
+   - No spaces around the `=` sign
+   - No quotes around the API key value
+3. **Restart the development server**:
+   - Stop the server with `Ctrl+C`
+   - Run `npm start` again
+4. **Check the browser console** for the environment check log to verify the API key is loaded
+
+### Other Issues
+
+- **Model not responding**: Check your OpenRouter API key is valid and has sufficient credits
+- **CORS errors**: Ensure you're using the correct OpenRouter API endpoint
+- **Build errors**: Make sure all dependencies are installed with `npm install`
 
 ## Project Structure
 
