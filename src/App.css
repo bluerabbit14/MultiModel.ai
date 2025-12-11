@@ -62,7 +62,36 @@
 
 .side-panel.closed {
   width: 50px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.side-panel-closed-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px 0;
+  height: 100%;
+}
+
+.side-panel-toggle-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 20px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.side-panel-toggle-button:hover {
+  background-color: #e8e8e8;
+  color: #333;
 }
 
 .toggle-button {
@@ -888,10 +917,17 @@
   background: transparent;
   resize: none;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 100px;
   line-height: 1.5;
   font-family: inherit;
   word-wrap: break-word;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.input-field::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .input-field::placeholder {
@@ -937,6 +973,72 @@
   background-color: #e0e0e0;
 }
 
+.sample-prompts {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.sample-prompt-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 16px;
+  background: transparent;
+  border: 0px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.sample-prompt-item:hover {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sample-prompt-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.sample-prompt-icon .search-icon {
+  font-size: 18px;
+  color: #999;
+}
+
+.sample-prompt-icon .sparkle-overlay {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  color: #999;
+  opacity: 0.8;
+  background: white;
+  border-radius: 50%;
+  padding: 1px;
+}
+
+.sample-prompt-text {
+  flex: 1;
+  font-size: 14px;
+  color: #999;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.sample-prompt-item:hover .sample-prompt-text {
+  color: #666;
+}
+
 .footer {
   width: 100%;
   display: flex;
@@ -953,6 +1055,81 @@
   text-align: center;
   font-weight: 400;
   letter-spacing: 0.3px;
+}
+
+/* Tablet Responsive Styles */
+@media (max-width: 1024px) {
+  .chat-response-area {
+    padding: 18px;
+    padding-bottom: 170px;
+  }
+
+  .message-content {
+    font-size: 14.5px;
+  }
+
+  .message-content h1 {
+    font-size: 19px;
+  }
+
+  .message-content h2 {
+    font-size: 17px;
+  }
+
+  .message-content h3 {
+    font-size: 16px;
+  }
+
+  .chat-message.user .message-content,
+  .chat-message.assistant .message-content {
+    max-width: 75%;
+  }
+
+  .dropdown-container {
+    top: 15px;
+    left: 20px;
+  }
+
+  .dropdown-button {
+    font-size: 13px;
+    padding: 7px 14px;
+  }
+
+  .dropdown-menu {
+    min-width: 260px;
+    max-width: 300px;
+  }
+
+  .help-button {
+    top: 15px;
+    right: 20px;
+  }
+
+  /* Help Popup Tablet Styles */
+  .help-pad {
+    width: 85%;
+    max-width: 550px;
+  }
+
+  .help-pad-header h3 {
+    font-size: 17px;
+  }
+
+  .help-description {
+    font-size: 14.5px;
+  }
+
+  .help-features h4 {
+    font-size: 15.5px;
+  }
+
+  .help-features li {
+    font-size: 13.5px;
+  }
+
+  .help-info p {
+    font-size: 13.5px;
+  }
 }
 
 /* Mobile Responsive Styles */
@@ -1017,6 +1194,13 @@
     width: 100%;
     margin-left: 0;
     padding-top: 90px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .input-wrapper {
+    max-width: 100%;
+    padding: 0 10px;
   }
 
   .dropdown-container {
@@ -1031,11 +1215,459 @@
     z-index: 1001;
   }
 
+  .mobile-dropdown .dropdown-button {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 10px;
+  }
+
+  .mobile-dropdown .dropdown-arrow {
+    font-size: 9px;
+  }
+
   .mobile-dropdown .dropdown-menu {
     z-index: 1002;
+    min-width: 250px;
+    max-width: 90vw;
+    left: 0;
+    right: auto;
+  }
+
+  .dropdown-item {
+    padding: 10px 12px;
+    margin: 1px 0;
+  }
+
+  .dropdown-item-content {
+    gap: 10px;
+  }
+
+  .dropdown-item-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+  }
+
+  .dropdown-item-name {
+    font-size: 13px;
+  }
+
+  .dropdown-item-description {
+    font-size: 11px;
+  }
+
+  .dropdown-item-check {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
   }
 
   .main-content .dropdown-container {
     display: none;
+  }
+
+  .help-button {
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .help-button svg {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Sample Prompts Mobile Styles */
+  .sample-prompts {
+    gap: 10px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding: 0 10px;
+  }
+
+  .sample-prompt-item {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .sample-prompt-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .sample-prompt-icon .search-icon {
+    font-size: 16px;
+  }
+
+  .sample-prompt-icon .sparkle-overlay {
+    font-size: 8px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .sample-prompt-text {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Input Label Mobile Styles */
+  .input-label {
+    font-size: 24px;
+    margin-bottom: 16px;
+    padding: 0 20px;
+  }
+
+  /* Input Container Mobile Styles */
+  .input-container {
+    padding: 6px 12px;
+    border-radius: 24px;
+  }
+
+  .input-container.no-chat {
+    padding: 14px 12px;
+  }
+
+  .input-field {
+    font-size: 14px;
+    padding: 6px 0;
+  }
+
+  .send-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .send-arrow {
+    font-size: 16px;
+  }
+
+  /* Chat Response Area Mobile Styles */
+  .chat-response-area {
+    padding: 15px;
+    gap: 12px;
+    margin-top: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
+  }
+
+  .mobile-help-button {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    width: 36px;
+    height: 36px;
+  }
+
+  .mobile-help-button svg {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Help Popup Mobile Styles */
+  .help-pad {
+    width: 95%;
+    max-width: 500px;
+    max-height: 85vh;
+  }
+
+  .help-pad-header {
+    padding: 16px;
+  }
+
+  .help-pad-header h3 {
+    font-size: 16px;
+  }
+
+  .help-close-button {
+    font-size: 24px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .help-pad-content {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .help-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .help-features h4 {
+    font-size: 15px;
+    margin: 0 0 10px 0;
+  }
+
+  .help-features ul {
+    padding-left: 20px;
+  }
+
+  .help-features li {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 6px 0;
+  }
+
+  .help-info {
+    padding-top: 16px;
+    margin-top: 8px;
+  }
+
+  .help-info p {
+    font-size: 13px;
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  .message-content {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .message-content h1 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .message-content h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .message-content h3 {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .message-content .message-paragraph {
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+  }
+
+  .message-content .message-list {
+    margin: 6px 0 10px 0;
+    padding-left: 20px;
+  }
+
+  .message-content .message-list-item {
+    margin: 3px 0;
+    line-height: 1.5;
+  }
+
+  .chat-message.user .message-content,
+  .chat-message.assistant .message-content {
+    padding: 10px 14px;
+    max-width: 85%;
+  }
+
+  .chat-message.system .message-content {
+    font-size: 12px;
+    padding: 6px 12px;
+    max-width: 90%;
+  }
+
+  .message-timestamp {
+    font-size: 11px;
+  }
+
+  .copy-button {
+    font-size: 12px;
+    padding: 3px;
+  }
+
+  .message-footer {
+    gap: 6px;
+    margin-top: 3px;
+  }
+
+  /* Additional mobile adjustments for very small screens */
+  @media (max-width: 480px) {
+    .input-label {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .sample-prompts {
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sample-prompt-item {
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .sample-prompt-text {
+      font-size: 11px;
+    }
+
+    .input-container {
+      padding: 5px 10px;
+    }
+
+    .input-container.no-chat {
+      padding: 12px 10px;
+    }
+
+    .input-field {
+      font-size: 13px;
+    }
+
+    /* Chat Response Area Extra Small Screen Styles */
+    .chat-response-area {
+      padding: 12px;
+      gap: 10px;
+      margin-top: 80px;
+    }
+
+    .message-content {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .message-content h1 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .message-content h2 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .message-content h3 {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .message-content .message-paragraph {
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+    }
+
+    .message-content .message-list {
+      margin: 5px 0 8px 0;
+      padding-left: 18px;
+    }
+
+    .chat-message.user .message-content,
+    .chat-message.assistant .message-content {
+      padding: 8px 12px;
+      max-width: 90%;
+    }
+
+    .chat-message.system .message-content {
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+
+    .message-timestamp {
+      font-size: 10px;
+    }
+
+    .copy-button {
+      font-size: 11px;
+    }
+
+    /* Dropdown Extra Small Screen Styles */
+    .mobile-dropdown .dropdown-button {
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+
+    .mobile-dropdown .dropdown-menu {
+      min-width: 220px;
+      max-width: 85vw;
+    }
+
+    .dropdown-item {
+      padding: 8px 10px;
+    }
+
+    .dropdown-item-name {
+      font-size: 12px;
+    }
+
+    .dropdown-item-description {
+      font-size: 10px;
+    }
+
+    .dropdown-item-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 12px;
+    }
+
+    .dropdown-item-check {
+      width: 16px;
+      height: 16px;
+      font-size: 11px;
+    }
+
+    /* Help Popup Extra Small Screen Styles */
+    .help-pad {
+      width: 98%;
+      max-width: 100%;
+      max-height: 90vh;
+    }
+
+    .help-pad-header {
+      padding: 12px;
+    }
+
+    .help-pad-header h3 {
+      font-size: 14px;
+    }
+
+    .help-close-button {
+      font-size: 20px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .help-pad-content {
+      padding: 12px;
+      gap: 12px;
+    }
+
+    .help-description {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .help-features h4 {
+      font-size: 14px;
+      margin: 0 0 8px 0;
+    }
+
+    .help-features ul {
+      padding-left: 18px;
+    }
+
+    .help-features li {
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 5px 0;
+    }
+
+    .help-info {
+      padding-top: 12px;
+      margin-top: 6px;
+    }
+
+    .help-info p {
+      font-size: 12px;
+      margin: 5px 0;
+      line-height: 1.4;
+    }
   }
 }

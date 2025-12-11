@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faPen, faArrowUp, faBars, faCheck, faBolt, faXmark, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faPen, faArrowUp, faBars, faCheck, faBolt, faXmark, faAngleLeft, faStar } from '@fortawesome/free-solid-svg-icons';
 import { faCopy, faPenToSquare, faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
 import { getActiveModels, getDefaultModel } from './config/openrouter';
 import { sendChatRequest, extractResponseText, formatMessagesForAPI } from './services/openrouterApi';
@@ -18,6 +18,12 @@ function App() {
     'What can I do for you?',
     'Tell me what you\'re thinking',
     'What would you like to explore?'
+  ];
+
+  const samplePrompts = [
+    'Help me map out training for my first marathon',
+    'Help me pack for my trip to Kerala next week',
+    'How exactly does blockchain technology work, in simple terms?'
   ];
 
   const isInitialMobile = typeof window !== 'undefined' && window.innerWidth <= 770;
@@ -165,6 +171,89 @@ function App() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleSamplePromptClick = (prompt) => {
+    if (prompt.trim() && !isLoading) {
+      const userMessage = {
+        id: Date.now(),
+        text: prompt.trim(),
+        sender: 'user',
+        timestamp: new Date()
+      };
+      
+      // Add user message
+      const updatedMessages = [...messages, userMessage];
+      setMessages(updatedMessages);
+      setHasChatStarted(true);
+      setInputValue('');
+      setIsLoading(true);
+      
+      // Send request
+      (async () => {
+        try {
+          // Format messages for API (include conversation history)
+          const apiMessages = formatMessagesForAPI(updatedMessages);
+          
+          // Send request to OpenRouter API
+          const response = await sendChatRequest(selectedModel.openrouter_id, apiMessages);
+          
+          // Extract response text
+          const responseText = extractResponseText(response);
+          
+          // Add assistant response with typing animation
+          const assistantMessageId = Date.now() + 1;
+          const assistantMessage = {
+            id: assistantMessageId,
+            text: responseText || 'Sorry, I could not generate a response.',
+            sender: 'assistant',
+            timestamp: new Date()
+          };
+          
+          // Start typing animation
+          setTypingMessages(prev => ({
+            ...prev,
+            [assistantMessageId]: {
+              displayedText: '',
+              fullText: assistantMessage.text,
+              isTyping: true
+            }
+          }));
+          
+          // Add message with empty text initially (will be updated by typing animation)
+          setMessages([...updatedMessages, { ...assistantMessage, text: '' }]);
+          
+          // Start typing animation
+          startTypingAnimation(assistantMessageId, assistantMessage.text, updatedMessages);
+        } catch (error) {
+          console.error('Error sending message:', error);
+          // Add error message with typing animation
+          const errorMessageId = Date.now() + 1;
+          const errorText = `Error: ${error.message || 'Failed to get response from API'}`;
+          const errorMessage = {
+            id: errorMessageId,
+            text: errorText,
+            sender: 'assistant',
+            timestamp: new Date()
+          };
+          
+          // Start typing animation for error message
+          setTypingMessages(prev => ({
+            ...prev,
+            [errorMessageId]: {
+              displayedText: '',
+              fullText: errorText,
+              isTyping: true
+            }
+          }));
+          
+          setMessages([...updatedMessages, { ...errorMessage, text: '' }]);
+          startTypingAnimation(errorMessageId, errorText, updatedMessages);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
     }
   };
 
@@ -578,15 +667,17 @@ function App() {
 
       {/* Side Panel */}
       <div className={`side-panel ${isPanelOpen ? 'open' : 'closed'}`}>
-        {isPanelOpen && (
+        {isPanelOpen ? (
           <>
             <div className="side-panel-header">
               <div className="side-panel-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
                 <img src="/multimodel.png" alt="MultiModel.ai" className="logo-image" />
               </div>
-              {/* <button className="side-panel-close-button" >
-                <FontAwesomeIcon icon={faAngleLeft} />
-              </button> */}
+              {!isMobile && (
+                <button className="side-panel-close-button" onClick={togglePanel}>
+                  <FontAwesomeIcon icon={faAngleLeft} />
+                </button>
+              )}
             </div>
             <div className="side-panel-content">
               <button className="side-panel-item" onClick={handleNewChat}>
@@ -603,6 +694,14 @@ function App() {
             </button>
             </div>
           </>
+        ) : (
+          !isMobile && (
+            <div className="side-panel-closed-content">
+              <button className="side-panel-toggle-button" onClick={togglePanel} title="Open sidebar">
+                <FontAwesomeIcon icon={faBars} />
+              </button>
+            </div>
+          )
         )}
       </div>
 
@@ -717,6 +816,11 @@ function App() {
             </button>
           </>
         )}
+        {isMobile && (
+          <button className="help-button mobile-help-button" onClick={handleHelpOpen}>
+            <FontAwesomeIcon icon={faCircleQuestion} />
+          </button>
+        )}
         <div className="input-wrapper">
           {!hasChatStarted && (
             <p className="input-label">{currentInputLabel}</p>
@@ -800,6 +904,23 @@ function App() {
               <FontAwesomeIcon icon={faArrowUp} className="send-arrow" />
             </button>
           </div>
+          {!hasChatStarted && (
+            <div className="sample-prompts">
+              {samplePrompts.map((prompt, index) => (
+                <button
+                  key={index}
+                  className="sample-prompt-item"
+                  onClick={() => handleSamplePromptClick(prompt)}
+                >
+                  <div className="sample-prompt-icon">
+                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
+                    <FontAwesomeIcon icon={faStar} className="sparkle-overlay" />
+                  </div>
+                  <span className="sample-prompt-text">{prompt}</span>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="footer">
             <p className="footer-text">©2025 MultiModel.ai. All rights reserved.</p>
           </div>
