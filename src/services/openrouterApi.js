@@ -4,9 +4,10 @@ import { OPENROUTER_CONFIG } from '../config/openrouter';
  * Send a chat completion request to OpenRouter API
  * @param {string} model - The model ID to use (e.g., 'google/gemma-3n-e2b-it:free')
  * @param {Array} messages - Array of message objects with role and content
+ * @param {number} maxTokens - Maximum number of tokens in the response (default: 1500)
  * @returns {Promise} - API response
  */
-export const sendChatRequest = async (model, messages) => {
+export const sendChatRequest = async (model, messages, maxTokens = 1500) => {
   try {
     // Verify API key is present before making request
     if (!OPENROUTER_CONFIG.API_KEY || OPENROUTER_CONFIG.API_KEY.trim() === '') {
@@ -18,7 +19,8 @@ export const sendChatRequest = async (model, messages) => {
       messages: messages.map(msg => ({
         role: msg.role,
         content: msg.content
-      }))
+      })),
+      max_tokens: maxTokens
     };
 
     // Debug: Log request details (without exposing full API key)

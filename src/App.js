@@ -108,7 +108,7 @@ function App() {
         const apiMessages = formatMessagesForAPI(updatedMessages);
         
         // Send request to OpenRouter API
-        const response = await sendChatRequest(selectedModel.openrouter_id, apiMessages);
+        const response = await sendChatRequest(selectedModel.openrouter_id, apiMessages, selectedModel.max_tokens);
         
         // Extract response text
         const responseText = extractResponseText(response);
